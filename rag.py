@@ -1,19 +1,20 @@
+import re
+
+
 text = """
 Machine learning is a field of artificial intelligence.
 It allows computers to learn patterns from data.
 Supervised learning uses labeled data for training.
 Unsupervised learning works with unlabeled data.
 Deep learning uses neural networks with multiple layers.
+These networks are trained using algorithms such as gradient descent.
 """
 
-chunk_size = 100
 
-chunks = []
+sentences = re.split(r'(?<=[.!?])\s+', text.strip())
 
-for i in range(0, len(text), chunk_size):
-    chunk = text[i:i + chunk_size]
-    chunks.append(chunk)
+print("Sentences:")
+print(sentences)
 
-for i, chunk in enumerate(chunks):
-    print(f"\nChunk {i + 1}:")
-    print(chunk)
+for sentence in sentences:
+    print(sentence)
