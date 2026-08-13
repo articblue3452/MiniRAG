@@ -10,7 +10,10 @@ Deep learning uses neural networks with multiple layers.
 These networks are trained using algorithms such as gradient descent.
 """
 
-def chunk_text(text, chunk_size=200, overlap=0):
+def chunk_text(text, chunk_size=100, overlap=0):
+    if overlap < 0 or overlap >= chunk_size:
+        raise ValueError("overlap must be >= 0 and smaller than chunk_size")
+
     sentences = re.split(r'(?<=[.!?])\s+', text.strip())
 
     chunks = []
@@ -24,7 +27,7 @@ def chunk_text(text, chunk_size=200, overlap=0):
         else:
             chunks.append(current_chunk.strip())
 
-            overlap_text = current_chunk[-overlap:]
+            overlap_text = current_chunk[-overlap:] if overlap > 0 else ""
             current_chunk = overlap_text + " " + sentence
 
     if current_chunk:
