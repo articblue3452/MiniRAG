@@ -1,5 +1,6 @@
 import re
-
+from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
 
 text = """
 Machine learning is a field of artificial intelligence.
@@ -34,4 +35,24 @@ def chunk_text(text, chunk_size=150, overlap_sentences=1):
 
     return chunks
 
-print(chunk_text(text))
+model = SentenceTransformer("all-MiniLM-L6-v2")
+
+sentences = [
+    "Python is commonly used for machine learning.",
+    "Python is a popular language for AI development.",
+    "I like eating pizza.",
+    "The car is parked outside."
+]
+
+embeddings = model.encode(sentences)
+
+similarity = cosine_similarity(embeddings)
+
+for i in range(len(sentences)):
+    for j in range(i + 1, len(sentences)):
+        print(
+            f"\n{sentences[i]}"
+            f"\nvs"
+            f"\n{sentences[j]}"
+            f"\nSimilarity: {similarity[i][j]:.4f}"
+        )
