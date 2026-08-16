@@ -2,6 +2,7 @@ import re
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
+
 text = """
 Machine learning is a field of artificial intelligence.
 It allows computers to learn patterns from data.
@@ -11,6 +12,7 @@ Deep learning uses neural networks with multiple layers.
 These networks are trained using algorithms such as gradient descent.
 """
 
+
 def chunk_text(text, chunk_size=150, overlap_sentences=1):
     sentences = re.split(r'(?<=[.!?])\s+', text.strip())
 
@@ -18,7 +20,6 @@ def chunk_text(text, chunk_size=150, overlap_sentences=1):
     current = []
 
     for sentence in sentences:
-
         current_text = " ".join(current)
 
         if len(current_text) + len(sentence) <= chunk_size:
@@ -35,24 +36,48 @@ def chunk_text(text, chunk_size=150, overlap_sentences=1):
 
     return chunks
 
+
+# 1. Create chunks
+chunks = chunk_text(text)
+
+print("DOCUMENT CHUNKS")
+
+for i, chunk in enumerate(chunks):
+    print(f"\nChunk {i + 1}:")
+    print(chunk)
+
+
+# 2. Load embedding model
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
-sentences = [
-    "Python is commonly used for machine learning.",
-    "Python is a popular language for AI development.",
-    "I like eating pizza.",
-    "The car is parked outside."
-]
 
-embeddings = model.encode(sentences)
+# 3. Create embeddings for our chunks
+chunk_embeddings = model.encode(chunks)
 
-similarity = cosine_similarity(embeddings)
 
-for i in range(len(sentences)):
-    for j in range(i + 1, len(sentences)):
-        print(
-            f"\n{sentences[i]}"
-            f"\nvs"
-            f"\n{sentences[j]}"
-            f"\nSimilarity: {similarity[i][j]:.4f}"
-        )
+# 4. User query
+query = "How do neural networks learn?"
+
+query_embedding = model.encode([query])
+
+
+# 5. Compare query with every chunk
+scores = cosine_similarity(
+    query_embedding,
+    chunk_embeddings
+)[0]
+
+
+# 6. Rank chunks by similarity
+results = sorted(
+    zip(scores, chunks),
+    reverse=True
+)
+
+
+# 7. Display results
+print("\nSEARCH RESULTS")
+
+for score, chunk in results:
+    print(f"\nScore: {score:.4f}")
+    print(chunk)
