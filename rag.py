@@ -3,6 +3,7 @@ from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
 
+
 text = """
 Machine learning is a field of artificial intelligence.
 It allows computers to learn patterns from data.
